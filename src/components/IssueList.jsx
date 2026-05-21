@@ -112,7 +112,6 @@ export default function IssueList({ onNavigateToBulk, onNavigateToCreate, onView
       {/* Main Canvas */}
       <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 sm:px-6 py-8 flex flex-col gap-6">
         
-        {/* Header Section */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <h1 className="text-3xl font-bold text-gray-900">Incidències</h1>
           <div className="flex flex-wrap items-center gap-3">
@@ -127,7 +126,6 @@ export default function IssueList({ onNavigateToBulk, onNavigateToCreate, onView
           </div>
         </header>
 
-        {/* Filters Section */}
         <section className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative">
@@ -207,7 +205,6 @@ export default function IssueList({ onNavigateToBulk, onNavigateToCreate, onView
           </div>
         </section>
 
-        {/* Data Table */}
         <section className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex-1 mb-8">
           {loading ? (
             <div className="text-center py-20">
@@ -270,6 +267,7 @@ export default function IssueList({ onNavigateToBulk, onNavigateToCreate, onView
                   {issues.map((issue, index) => {
                     const statusName = getName(statuses, issue.status_id);
                     const statusColor = getColor(statuses, issue.status_id);
+                    const typeColor = getColor(issueTypes, issue.issue_type_id);
                     const priorityColor = getColor(priorities, issue.priority_id);
                     const severityColor = getColor(severities, issue.severity_id);
                     
@@ -280,19 +278,19 @@ export default function IssueList({ onNavigateToBulk, onNavigateToCreate, onView
                           {issue.subject}
                         </td>
                         <td className="px-5 py-4">
-                          {/* Opacidad en HEX añadiendo '15' (aprox 10%) al final del color */}
                           <span 
                             className="px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center border"
-                            style={{ 
-                              backgroundColor: `${statusColor}15`, 
-                              color: statusColor, 
-                              borderColor: `${statusColor}30` 
-                            }}
+                            style={{ backgroundColor: `${statusColor}15`, color: statusColor, borderColor: `${statusColor}30` }}
                           >
                             {statusName}
                           </span>
                         </td>
-                        <td className="px-5 py-4 text-gray-600">{getName(issueTypes, issue.issue_type_id)}</td>
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-2">
+                             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: typeColor }}></span>
+                             {getName(issueTypes, issue.issue_type_id)}
+                          </div>
+                        </td>
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: priorityColor }}></span>
