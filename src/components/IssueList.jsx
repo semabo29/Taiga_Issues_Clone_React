@@ -67,16 +67,6 @@ export default function IssueList({ onNavigateToBulk, onNavigateToCreate, onView
       {/* TopNavBar */}
       <nav className="bg-white border-b border-gray-200 shadow-sm flex justify-between items-center px-6 h-16 w-full z-40 sticky top-0">
         <div className="flex items-center gap-6">
-          <form onSubmit={handleSearch} className="hidden md:flex items-center bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500 transition-all w-64">
-            <span className="material-symbols-outlined text-gray-400 text-[18px] mr-2">search</span>
-            <input 
-              className="bg-transparent border-none focus:ring-0 p-0 text-sm w-full text-gray-800 placeholder-gray-400 outline-none" 
-              placeholder="Search subject..." 
-              type="text"
-              value={filters.query}
-              onChange={(e) => setFilters({ ...filters, query: e.target.value })}
-            />
-          </form>
         </div>
         
         <div className="flex items-center gap-2 md:gap-4">
@@ -125,6 +115,18 @@ export default function IssueList({ onNavigateToBulk, onNavigateToCreate, onView
             </button>
           </div>
         </header>
+
+        {/* Search Bar */}
+        <form onSubmit={handleSearch} className="flex items-center bg-white border border-gray-200 rounded-lg px-3 py-2 focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500 transition-all w-full md:w-64">
+          <span className="material-symbols-outlined text-gray-400 text-[18px] mr-2">search</span>
+          <input 
+            className="bg-transparent border-none focus:ring-0 p-0 text-sm w-full text-gray-800 placeholder-gray-400 outline-none" 
+            placeholder="Cercar per assumpte..." 
+            type="text"
+            value={filters.query}
+            onChange={(e) => setFilters({ ...filters, query: e.target.value })}
+          />
+        </form>
 
         <section className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
           <div className="flex flex-wrap items-center gap-3">
@@ -204,6 +206,7 @@ export default function IssueList({ onNavigateToBulk, onNavigateToCreate, onView
             </div>
           </div>
         </section>
+
 
         <section className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex-1 mb-8">
           {loading ? (
