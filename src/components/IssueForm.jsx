@@ -3,8 +3,7 @@ import { UserContext } from '../context/UserContext';
 import { issueService } from '../services/issueService';
 
 export default function IssueForm({ onBack, issueToEdit = null, onShowNotification }) {
-  // Extraemos las listas dinámicas del Context
-  const { currentUser, USERS, statuses, issueTypes, priorities, severities } = useContext(UserContext);
+  const { currentUser, USERS, statuses, issueTypes, priorities, severities, deadlineShortcuts } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -30,7 +29,6 @@ export default function IssueForm({ onBack, issueToEdit = null, onShowNotificati
     const payload = { ...formData };
     if (!payload.deadline) delete payload.deadline;
     
-    // Forzamos a número o null
     payload.assigned_to_id = (payload.assigned_to_id === "" || payload.assigned_to_id === null) ? null : parseInt(payload.assigned_to_id, 10);
 
     try {
@@ -47,6 +45,25 @@ export default function IssueForm({ onBack, issueToEdit = null, onShowNotificati
     } finally {
       setLoading(false);
     }
+  };
+
+  // funció robusta per calcular la nova data
+  const handleShortcutClick = (shortcut) => {
+    // 1. busquem el valor de dies provant els noms més comuns que pot tenir al backend
+    const rawDays = shortcut.offset_days ?? shortcut.days ?? shortcut.offset ?? 0;
+    
+    // 2. ens assegurem que sigui un número enter i no text
+    const daysToAdd = parseInt(rawDays, 10);
+    
+    // 3. sumem els dies a la data actual
+    const newDate = new Date();
+    newDate.setDate(newDate.getDate() + daysToAdd);
+    
+    // 4. ajustem el fus horari per evitar que toISOString() ens resti un dia a la nit
+    const offset = newDate.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(newDate.getTime() - offset)).toISOString().split('T')[0];
+    
+    setFormData(prev => ({ ...prev, deadline: localISOTime }));
   };
 
   return (
@@ -144,6 +161,32 @@ export default function IssueForm({ onBack, issueToEdit = null, onShowNotificati
               disabled={loading}
               style={{ width: '100%', boxSizing: 'border-box' }}
             />
+            
+            {/* bloc de botons per als atajos de dates límits */}
+            {deadlineShortcuts && deadlineShortcuts.length > 0 && (
+              <div style={{ marginTop: '10px', display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                {deadlineShortcuts.map(shortcut => (
+                  <button
+                    key={shortcut.id}
+                    type="button"
+                    // li passem l'objecte sencer per inspeccionar-lo
+                    onClick={() => handleShortcutClick(shortcut)}
+                    disabled={loading}
+                    style={{
+                      padding: '4px 8px',
+                      fontSize: '12px',
+                      background: '#e4e6ea',
+                      color: '#333',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {shortcut.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
