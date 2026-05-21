@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { issueService } from '../services/issueService';
+import UserAvatar from './UserAvatar';
 
 export default function IssueList({ onNavigateToBulk, onNavigateToCreate, onViewDetail, onNavigateToSettings, onNavigateToProfile}) {
   const { currentUser, setCurrentUser, USERS, getUserNameById, statuses, issueTypes, priorities, severities } = useContext(UserContext);
@@ -311,22 +312,38 @@ export default function IssueList({ onNavigateToBulk, onNavigateToCreate, onView
                         <td className="px-5 py-4 text-gray-500">
                           {issue.deadline ? new Date(issue.deadline).toLocaleDateString() : "-"}
                         </td>
+                        
+                        {/* COLUMNA CREADOR */}
                         <td className="px-5 py-4 text-gray-600">
-                          <span 
-                            onClick={(e) => { e.stopPropagation(); onNavigateToProfile(issue.user_id); }} 
-                            className="cursor-pointer hover:text-emerald-600 hover:underline font-medium"
-                          >
-                            {getUserNameById(issue.user_id)}
-                          </span>
-                        </td>
-                        <td className="px-5 py-4 text-gray-600">
-                          {issue.assigned_to_id ? (
+                          <div className="flex items-center gap-2">
+                            <UserAvatar 
+                              userId={issue.user_id} 
+                              onClick={(e) => { e.stopPropagation(); onNavigateToProfile(issue.user_id); }} 
+                            />
                             <span 
-                              onClick={(e) => { e.stopPropagation(); onNavigateToProfile(issue.assigned_to_id); }} 
+                              onClick={(e) => { e.stopPropagation(); onNavigateToProfile(issue.user_id); }} 
                               className="cursor-pointer hover:text-emerald-600 hover:underline font-medium"
                             >
-                              {getUserNameById(issue.assigned_to_id)}
+                              {getUserNameById(issue.user_id)}
                             </span>
+                          </div>
+                        </td>
+
+                        {/* COLUMNA ASSIGNAT */}
+                        <td className="px-5 py-4 text-gray-600">
+                          {issue.assigned_to_id ? (
+                            <div className="flex items-center gap-2">
+                              <UserAvatar 
+                                userId={issue.assigned_to_id} 
+                                onClick={(e) => { e.stopPropagation(); onNavigateToProfile(issue.assigned_to_id); }} 
+                              />
+                              <span 
+                                onClick={(e) => { e.stopPropagation(); onNavigateToProfile(issue.assigned_to_id); }} 
+                                className="cursor-pointer hover:text-emerald-600 hover:underline font-medium"
+                              >
+                                {getUserNameById(issue.assigned_to_id)}
+                              </span>
+                            </div>
                           ) : (
                             "-"
                           )}
