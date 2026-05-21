@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../context/UserContext';
 
-const UserProfile = ({ userId, onBack, onShowNotification }) => {
+const UserProfile = ({ userId, onBack, onShowNotification, onNavigateToEdit }) => {
   const { getUserNameById, currentUser } = useContext(UserContext);
   const [userApiData, setUserApiData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -78,7 +78,17 @@ const UserProfile = ({ userId, onBack, onShowNotification }) => {
           </h2>
           <p style={{ color: '#888', fontSize: '14px' }}>ID del Usuario: {userId}</p>
           {userApiData && userApiData.email && (
-            <p style={{ color: '#666', fontSize: '14px' }}>{userApiData.email}</p>
+          <p style={{ color: '#666', fontSize: '14px' }}>{userApiData.email}</p>
+          )}
+
+          {/* BOTON DE EDITAR solo si el perfil es del usuario actual */}
+          {currentUser.id === userId && (
+            <button 
+              onClick={onNavigateToEdit}
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200"
+            >
+              Editar Perfil
+            </button>
           )}
         </div>
 
