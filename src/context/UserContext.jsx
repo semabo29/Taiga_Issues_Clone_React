@@ -1,6 +1,6 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useEffect } from 'react';
+import { issueService } from '../services/issueService';
 
-// Reemplaza estas keys por 3 reales de vuestra base de datos de Render
 export const USERS = [
   { id: 4, name: "Sergi", apiKey: "d2a157a572db39ed25cc9ffea7ee1b12" },
   { id: 2, name: "Victor", apiKey: "TU_API_KEY_AQUI_2" },
@@ -12,16 +12,39 @@ export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(USERS[0]);
+  
+  const [statuses, setStatuses] = useState([]);
+  const [issueTypes, setIssueTypes] = useState([]);
+  const [priorities, setPriorities] = useState([]);
+  const [severities, setSeverities] = useState([]);
 
-  // Función de ayuda para buscar el nombre de un usuario por su ID de Render
+  useEffect(() => {
+    if (currentUser && currentUser.apiKey) {
+      Promise.all([
+        issueService.getStatuses(currentUser.apiKey),
+        issueService.getIssueTypes(currentUser.apiKey),
+        issueService.getPriorities(currentUser.apiKey),
+        issueService.getSeverities(currentUser.apiKey)
+      ]).then(([stData, itData, prData, svData]) => {
+        setStatuses(stData);
+        setIssueTypes(itData);
+        setPriorities(prData);
+        setSeverities(svData);
+      }).catch(err => console.error("Error carregant atributs dinàmics", err));
+    }
+  }, [currentUser]);
+
   const getUserNameById = (id) => {
     if (!id) return "Sense assignar";
-    const user = USERS.find(u => u.backendId === id || u.backendId === String(id));
+    const user = USERS.find(u => u.id === parseInt(id));
     return user ? user.name : "Usuari extern";
   };
 
   return (
-    <UserContext.Provider value={{ currentUser, setCurrentUser, USERS, getUserNameById }}>
+    <UserContext.Provider value={{ 
+      currentUser, setCurrentUser, USERS, getUserNameById,
+      statuses, issueTypes, priorities, severities 
+    }}>
       {children}
     </UserContext.Provider>
   );

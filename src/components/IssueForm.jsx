@@ -1,20 +1,20 @@
 import { useState, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { issueService } from '../services/issueService';
-import { MAPPINGS } from '../utils/constants';
 
 export default function IssueForm({ onBack, issueToEdit = null, onShowNotification }) {
-  const { currentUser, USERS } = useContext(UserContext);
+  // Extraemos las listas dinámicas del Context
+  const { currentUser, USERS, statuses, issueTypes, priorities, severities } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     subject: issueToEdit?.subject || "",
     description: issueToEdit?.description || "",
-    status_id: issueToEdit?.status_id || 1,
-    priority_id: issueToEdit?.priority_id || 2,
-    severity_id: issueToEdit?.severity_id || 2,
-    issue_type_id: issueToEdit?.issue_type_id || 1,
-    assigned_to_id: issueToEdit?.assigned_to_id || "", // NUEVO: Asignación
+    status_id: issueToEdit?.status_id || (statuses.length > 0 ? statuses[0].id : 1),
+    priority_id: issueToEdit?.priority_id || (priorities.length > 0 ? priorities[0].id : 2),
+    severity_id: issueToEdit?.severity_id || (severities.length > 0 ? severities[0].id : 2),
+    issue_type_id: issueToEdit?.issue_type_id || (issueTypes.length > 0 ? issueTypes[0].id : 1),
+    assigned_to_id: issueToEdit?.assigned_to_id || "", 
     deadline: issueToEdit?.deadline || "",
   });
 
@@ -29,7 +29,9 @@ export default function IssueForm({ onBack, issueToEdit = null, onShowNotificati
 
     const payload = { ...formData };
     if (!payload.deadline) delete payload.deadline;
-    if (!payload.assigned_to_id) payload.assigned_to_id = null; // Si está vacío, enviamos null
+    
+    // Forzamos a número o null
+    payload.assigned_to_id = (payload.assigned_to_id === "" || payload.assigned_to_id === null) ? null : parseInt(payload.assigned_to_id, 10);
 
     try {
       if (issueToEdit) {
@@ -62,7 +64,6 @@ export default function IssueForm({ onBack, issueToEdit = null, onShowNotificati
       </div>
 
       <div className="detail-grid">
-        {/* COLUMNA PRINCIPAL (Izquierda) */}
         <div className="description-panel panel" style={{boxShadow: 'none', border: '1px solid #eee', background: '#fff', padding: '0'}}>
           <div style={{ padding: '25px' }}>
             <div className="form-group" style={{ marginBottom: '25px' }}>
@@ -90,19 +91,34 @@ export default function IssueForm({ onBack, issueToEdit = null, onShowNotificati
           </div>
         </div>
 
-        {/* BARRA LATERAL DE ATRIBUTOS (Derecha) */}
         <div className="sidebar-panel" style={{ background: '#f8f9fa', padding: '25px', borderRadius: '6px', border: '1px solid #eee', alignSelf: 'start' }}>
-          
-          <h4 style={{ fontSize: '12px', textTransform: 'uppercase', color: '#888', borderBottom: '1px solid #ddd', paddingBottom: '10px', marginBottom: '20px' }}>
-            Atributs
-          </h4>
+          <h4 style={{ fontSize: '12px', textTransform: 'uppercase', color: '#888', borderBottom: '1px solid #ddd', paddingBottom: '10px', marginBottom: '20px' }}>Atributs</h4>
+
+          <div className="meta-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '5px' }}>
+            <span className="meta-label">Tipus</span>
+            <select value={formData.issue_type_id} onChange={(e) => setFormData({ ...formData, issue_type_id: parseInt(e.target.value, 10) })} disabled={loading} style={{ width: '100%', padding: '8px' }}>
+              {issueTypes.map((it) => <option key={it.id} value={it.id}>{it.name}</option>)}
+            </select>
+          </div>
 
           <div className="meta-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '5px' }}>
             <span className="meta-label">Estat</span>
-            <select value={formData.status_id} onChange={(e) => setFormData({ ...formData, status_id: parseInt(e.target.value) })} disabled={loading} style={{ width: '100%' }}>
-              {Object.entries(MAPPINGS.status).map(([id, name]) => (
-                <option key={id} value={id}>{name}</option>
-              ))}
+            <select value={formData.status_id} onChange={(e) => setFormData({ ...formData, status_id: parseInt(e.target.value, 10) })} disabled={loading} style={{ width: '100%', padding: '8px' }}>
+              {statuses.map((st) => <option key={st.id} value={st.id}>{st.name}</option>)}
+            </select>
+          </div>
+
+          <div className="meta-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '5px' }}>
+            <span className="meta-label">Prioritat</span>
+            <select value={formData.priority_id} onChange={(e) => setFormData({ ...formData, priority_id: parseInt(e.target.value, 10) })} disabled={loading} style={{ width: '100%', padding: '8px' }}>
+              {priorities.map((pr) => <option key={pr.id} value={pr.id}>{pr.name}</option>)}
+            </select>
+          </div>
+
+          <div className="meta-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '5px' }}>
+            <span className="meta-label">Severitat</span>
+            <select value={formData.severity_id} onChange={(e) => setFormData({ ...formData, severity_id: parseInt(e.target.value, 10) })} disabled={loading} style={{ width: '100%', padding: '8px' }}>
+              {severities.map((sv) => <option key={sv.id} value={sv.id}>{sv.name}</option>)}
             </select>
           </div>
 
@@ -110,43 +126,12 @@ export default function IssueForm({ onBack, issueToEdit = null, onShowNotificati
             <span className="meta-label">Assignat a</span>
             <select 
               value={formData.assigned_to_id || ""} 
-              onChange={(e) => setFormData({ ...formData, assigned_to_id: e.target.value ? parseInt(e.target.value) : null })} 
+              onChange={(e) => setFormData({ ...formData, assigned_to_id: e.target.value })} 
               disabled={loading} 
-              style={{ width: '100%' }}
+              style={{ width: '100%', padding: '8px' }}
             >
               <option value="">Sense assignar</option>
-              {USERS.map((u, index) => (
-                <option key={u.backendId || `form-user-${index}`} value={u.backendId}>
-                  {u.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="meta-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '5px' }}>
-            <span className="meta-label">Tipus</span>
-            <select value={formData.issue_type_id} onChange={(e) => setFormData({ ...formData, issue_type_id: parseInt(e.target.value) })} disabled={loading} style={{ width: '100%' }}>
-              {Object.entries(MAPPINGS.issue_type).map(([id, name]) => (
-                <option key={id} value={id}>{name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="meta-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '5px' }}>
-            <span className="meta-label">Prioritat</span>
-            <select value={formData.priority_id} onChange={(e) => setFormData({ ...formData, priority_id: parseInt(e.target.value) })} disabled={loading} style={{ width: '100%' }}>
-              {Object.entries(MAPPINGS.priority).map(([id, name]) => (
-                <option key={id} value={id}>{name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="meta-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '5px' }}>
-            <span className="meta-label">Severitat</span>
-            <select value={formData.severity_id} onChange={(e) => setFormData({ ...formData, severity_id: parseInt(e.target.value) })} disabled={loading} style={{ width: '100%' }}>
-              {Object.entries(MAPPINGS.severity).map(([id, name]) => (
-                <option key={id} value={id}>{name}</option>
-              ))}
+              {USERS.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
             </select>
           </div>
 
@@ -160,7 +145,6 @@ export default function IssueForm({ onBack, issueToEdit = null, onShowNotificati
               style={{ width: '100%', boxSizing: 'border-box' }}
             />
           </div>
-
         </div>
       </div>
     </div>

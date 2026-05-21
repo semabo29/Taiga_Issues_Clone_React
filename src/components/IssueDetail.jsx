@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { issueService } from '../services/issueService';
-import { MAPPINGS } from '../utils/constants';
 
 export default function IssueDetail({ issueId, onBack, onEdit, onShowNotification }) {
-  const { currentUser, USERS } = useContext(UserContext);
+  // Extraemos también las listas dinámicas
+  const { currentUser, USERS, statuses, issueTypes, priorities, severities } = useContext(UserContext);
   const [issue, setIssue] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,21 +35,19 @@ export default function IssueDetail({ issueId, onBack, onEdit, onShowNotificatio
   };
 
   const handleAssign = async (e) => {
-    // Capturamos el valor como string tal cual viene del select
-    const selectedValue = e.target.value;
-    // Si está vacío enviamos null, si tiene valor lo enviamos como string (si tu API usa UUIDs) o número
-    const newAssigneeId = selectedValue === "" ? null : selectedValue;
+    if (!issue) return; 
+
+    const rawValue = e.target.value;
+    const newAssigneeId = (rawValue === "" || rawValue === "undefined") ? null : parseInt(rawValue, 10);
     
     try {
-      // IMPORTANTE: Construimos el objeto completo para que el PUT sea un reemplazo válido 
-      // según tu api.yml
       const payload = {
         subject: issue.subject,
         description: issue.description || "",
-        status_id: parseInt(issue.status_id),
-        priority_id: parseInt(issue.priority_id),
-        severity_id: parseInt(issue.severity_id),
-        issue_type_id: parseInt(issue.issue_type_id),
+        status_id: parseInt(issue.status_id, 10),
+        priority_id: parseInt(issue.priority_id, 10),
+        severity_id: parseInt(issue.severity_id, 10),
+        issue_type_id: parseInt(issue.issue_type_id, 10),
         assigned_to_id: newAssigneeId
       };
 
@@ -59,23 +57,13 @@ export default function IssueDetail({ issueId, onBack, onEdit, onShowNotificatio
       setIssue(updatedIssue);
       onShowNotification("Assignació actualitzada", "success");
     } catch (error) {
-      console.error("Error al asignar:", error);
+      console.error(error);
       onShowNotification("Error canviant assignació.", "error");
     }
   };
 
-<select 
-  value={issue.assigned_to_id || ""} 
-  onChange={handleAssign} 
-  style={{ width: '100%', padding: '8px' }}
->
-  <option value="">Sense assignar</option>
-  {USERS.map((u, index) => (
-    <option key={u.backendId || `user-${index}`} value={u.backendId}>
-      {u.name}
-    </option>
-  ))}
-</select>
+  // Funciones helper para obtener los nombres visuales
+  const getName = (list, id) => list.find(item => item.id === id)?.name || "Desconegut";
 
   if (loading) return <div className="panel" style={{textAlign: 'center', padding: '50px'}}>Carregant detall...</div>;
   if (!issue) return null;
@@ -109,37 +97,38 @@ export default function IssueDetail({ issueId, onBack, onEdit, onShowNotificatio
 
           <div className="meta-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '5px' }}>
             <span className="meta-label">Assignat a</span>
-            <select value={issue.assigned_to_id || ""} onChange={handleAssign} style={{ width: '100%' }}>
+            <select 
+              value={issue.assigned_to_id || ""} 
+              onChange={handleAssign} 
+              style={{ width: '100%', padding: '8px' }}
+            >
               <option value="">Sense assignar</option>
-              {USERS.map((u, index) => (
-                /* Añadimos el index al key como salvavidas */
-                <option key={u.backendId || `user-${index}`} value={u.backendId}>
-                  {u.name}
-                </option>
+              {USERS.map((u) => (
+                <option key={u.id} value={u.id}>{u.name}</option>
               ))}
             </select>
           </div>
 
           <div className="meta-item">
             <span className="meta-label">Tipus:</span>
-            <span style={{fontWeight: '500'}}>{MAPPINGS.issue_type[issue.issue_type_id] || "Desconegut"}</span>
+            <span style={{fontWeight: '500'}}>{getName(issueTypes, issue.issue_type_id)}</span>
           </div>
 
           <div className="meta-item">
             <span className="meta-label">Estat:</span>
             <span style={{fontWeight: '500', background: '#e4e6ea', padding: '2px 8px', borderRadius: '10px', fontSize: '12px'}}>
-              {MAPPINGS.status[issue.status_id] || "Nou"}
+              {getName(statuses, issue.status_id)}
             </span>
           </div>
 
           <div className="meta-item">
             <span className="meta-label">Prioritat:</span>
-            <span>{MAPPINGS.priority[issue.priority_id] || "Normal"}</span>
+            <span>{getName(priorities, issue.priority_id)}</span>
           </div>
 
           <div className="meta-item">
             <span className="meta-label">Severitat:</span>
-            <span>{MAPPINGS.severity[issue.severity_id] || "Normal"}</span>
+            <span>{getName(severities, issue.severity_id)}</span>
           </div>
 
           <div className="meta-item" style={{ borderTop: '1px solid #eee', paddingTop: '15px', marginTop: '15px' }}>
