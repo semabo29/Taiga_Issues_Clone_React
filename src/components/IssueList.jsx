@@ -27,6 +27,32 @@ export default function IssueList({ onNavigateToBulk, onNavigateToCreate, onView
   const getName = (list, id) => list?.find(item => item.id === id)?.name || "-";
   const getColor = (list, id) => list?.find(item => item.id === id)?.color || "#6b7280";
 
+  const handleSortHeader = (field) => {
+    setFilters((prev) => {
+      const isCurrent = prev.sort === field;
+      
+      if (!isCurrent) {
+        // Primer clic en este campo: ordena ascendent
+        return { ...prev, sort: field, direction: 'asc' };
+      }
+      
+      if (prev.direction === 'asc') {
+        // Segundo clic: cambia a descendent
+        return { ...prev, sort: field, direction: 'desc' };
+      }
+      
+      // Tercer clic: quita la ordenación (vuelve a id desc)
+      return { ...prev, sort: 'id', direction: 'desc' };
+    });
+  };
+
+  const renderSortIndicator = (field) => {
+    if (filters.sort !== field) return <span className="text-gray-400">↕</span>;
+    return (
+      <span className="text-sm">{filters.direction === 'asc' ? '▲' : '▼'}</span>
+    );
+  };
+
   useEffect(() => {
     fetchIssues();
   }, [currentUser, filters.query, filters.sort, filters.direction, filters.type, filters.status, filters.priority, filters.severity]);
@@ -193,15 +219,51 @@ export default function IssueList({ onNavigateToBulk, onNavigateToCreate, onView
               <table className="w-full text-left border-collapse whitespace-nowrap">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">ID</th>
-                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Subjecte</th>
-                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Estat</th>
-                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Tipus</th>
-                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Prioritat</th>
-                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Severitat</th>
-                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Deadline</th>
-                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Creador</th>
-                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Assignat</th>
+                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      <button type="button" onClick={() => handleSortHeader('id')} className="flex items-center gap-1 text-left w-full text-gray-500 hover:text-emerald-600 transition-colors">
+                        ID {renderSortIndicator('id')}
+                      </button>
+                    </th>
+                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      <button type="button" onClick={() => handleSortHeader('subject')} className="flex items-center gap-1 text-left w-full text-gray-500 hover:text-emerald-600 transition-colors">
+                        Subjecte {renderSortIndicator('subject')}
+                      </button>
+                    </th>
+                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      <button type="button" onClick={() => handleSortHeader('status')} className="flex items-center gap-1 text-left w-full text-gray-500 hover:text-emerald-600 transition-colors">
+                        Estat {renderSortIndicator('status')}
+                      </button>
+                    </th>
+                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      <button type="button" onClick={() => handleSortHeader('type')} className="flex items-center gap-1 text-left w-full text-gray-500 hover:text-emerald-600 transition-colors">
+                        Tipus {renderSortIndicator('type')}
+                      </button>
+                    </th>
+                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      <button type="button" onClick={() => handleSortHeader('priority')} className="flex items-center gap-1 text-left w-full text-gray-500 hover:text-emerald-600 transition-colors">
+                        Prioritat {renderSortIndicator('priority')}
+                      </button>
+                    </th>
+                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      <button type="button" onClick={() => handleSortHeader('severity')} className="flex items-center gap-1 text-left w-full text-gray-500 hover:text-emerald-600 transition-colors">
+                        Severitat {renderSortIndicator('severity')}
+                      </button>
+                    </th>
+                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      <button type="button" onClick={() => handleSortHeader('deadline')} className="flex items-center gap-1 text-left w-full text-gray-500 hover:text-emerald-600 transition-colors">
+                        Deadline {renderSortIndicator('deadline')}
+                      </button>
+                    </th>
+                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      <button type="button" onClick={() => handleSortHeader('creator')} className="flex items-center gap-1 text-left w-full text-gray-500 hover:text-emerald-600 transition-colors">
+                        Creador {renderSortIndicator('creator')}
+                      </button>
+                    </th>
+                    <th className="px-5 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      <button type="button" onClick={() => handleSortHeader('assignee')} className="flex items-center gap-1 text-left w-full text-gray-500 hover:text-emerald-600 transition-colors">
+                        Assignat {renderSortIndicator('assignee')}
+                      </button>
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="text-sm text-gray-800">
