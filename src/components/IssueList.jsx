@@ -76,12 +76,11 @@ export default function IssueList({ onNavigateToBulk, onNavigateToCreate, onView
           </button>
           
           <div className="flex items-center gap-2 pl-4 border-l border-gray-200 ml-2">
-             <img 
-               alt="User profile" 
-               className="w-8 h-8 rounded-full border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity" 
-               src={`https://ui-avatars.com/api/?name=${currentUser.name}&background=f3f4f6&color=333`} 
-               onClick={() => onNavigateToProfile(currentUser.id)}
-               title="Veure el perfil"
+             {/* COMPONENT USER AVATAR A LA CABECERA */}
+             <UserAvatar 
+               userId={currentUser.id} 
+               size="w-9 h-9" 
+               onClick={() => onNavigateToProfile(currentUser.id)} 
              />
              <div className="relative flex items-center hidden sm:flex">
                <select 
