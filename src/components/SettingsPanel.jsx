@@ -16,7 +16,7 @@ const SECTIONS = [
     label: 'Estats',
     service: statusService,
     fields: [
-      { name: 'name',     label: 'Nom',   type: 'text',     required: true },
+      { name: 'name',      label: 'Nom',   type: 'text',     required: true },
       { name: 'color',    label: 'Color', type: 'color',    required: false },
       { name: 'is_closed', label: 'Tancat', type: 'checkbox', required: false }
     ]
@@ -62,8 +62,8 @@ const SECTIONS = [
     label: 'Dreceres de Deadline',
     service: deadlineShortcutService,
     fields: [
-      { name: 'name', label: 'Nom',      type: 'text',   required: true },
-      { name: 'days', label: 'Dies',     type: 'number', required: true }
+      { name: 'name',        label: 'Nom',     type: 'text',   required: true },
+      { name: 'offset_days', label: 'Dies',    type: 'number', required: true }
     ]
   }
 ];
@@ -91,7 +91,16 @@ function ItemForm({ fields, initial, loading, onSave, onCancel }) {
   const handleSubmit = () => {
     const missing = fields.find(f => f.required && !String(form[f.name] ?? '').trim());
     if (missing) return;
-    onSave(form);
+    
+    // assegurem que els camps de tipus nombre s'enviïn com a enters a l'API
+    const payload = { ...form };
+    fields.forEach(f => {
+      if (f.type === 'number' && payload[f.name] !== undefined) {
+        payload[f.name] = parseInt(payload[f.name], 10) || 0;
+      }
+    });
+
+    onSave(payload);
   };
 
   return (
@@ -275,9 +284,11 @@ function SettingsSection({ section, items, refresh, apiKey, onShowNotification }
                     <span style={{ fontSize: '14px', color: '#2f4359', fontWeight: '500' }}>
                       {item.name}
                     </span>
-                    {/* camps addicionals com dies o is_closed */}
-                    {item.days != null && (
-                      <span style={{ fontSize: '12px', color: '#888' }}>{item.days} dies</span>
+                    {/* camps addicionals com dies (offset_days) o is_closed */}
+                    {(item.offset_days != null || item.days != null) && (
+                      <span style={{ fontSize: '12px', color: '#888' }}>
+                        {item.offset_days ?? item.days} dies
+                      </span>
                     )}
                     {item.is_closed && (
                       <span style={{
