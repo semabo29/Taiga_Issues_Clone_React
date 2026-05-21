@@ -92,6 +92,70 @@ export const issueService = {
     return response.ok;
   },
 
+  // COMENTARIS
+  getComments: async (apiKey, issueId) => {
+    const response = await fetch(`${API_BASE_URL}/issues/${issueId}/comments`, {
+      headers: getHeaders(apiKey)
+    });
+    if (!response.ok) throw new Error("Error carregant els comentaris");
+    return response.json();
+  },
+
+  addComment: async (apiKey, issueId, commentData) => {
+    const response = await fetch(`${API_BASE_URL}/issues/${issueId}/comments`, {
+      method: "POST",
+      headers: getHeaders(apiKey),
+      body: JSON.stringify(commentData)
+    });
+    if (!response.ok) throw new Error("Error creant el comentari");
+    return response.json();
+  },
+
+  updateComment: async (apiKey, commentId, commentData) => {
+    const response = await fetch(`${API_BASE_URL}/comments/${commentId}`, {
+      method: "PUT",
+      headers: getHeaders(apiKey),
+      body: JSON.stringify(commentData)
+    });
+    if (!response.ok) throw new Error("Error actualitzant el comentari");
+    return response.json();
+  },
+
+  deleteComment: async (apiKey, commentId) => {
+    const response = await fetch(`${API_BASE_URL}/comments/${commentId}`, {
+      method: "DELETE",
+      headers: getHeaders(apiKey)
+    });
+    return response.ok;
+  },
+
+  // WATCHERS
+  getWatchers: async (apiKey, issueId) => {
+    const response = await fetch(`${API_BASE_URL}/issues/${issueId}/watching`, {
+      headers: getHeaders(apiKey)
+    });
+    if (!response.ok) throw new Error("Error carregant els watchers");
+    return response.json();
+  },
+
+  addWatcher: async (apiKey, issueId, watcherData) => {
+    const response = await fetch(`${API_BASE_URL}/issues/${issueId}/watching`, {
+      method: "POST",
+      headers: getHeaders(apiKey),
+      body: JSON.stringify(watcherData)
+    });
+    if (!response.ok) throw new Error("Error afegint watcher");
+    return response.json();
+  },
+
+  removeWatcher: async (apiKey, issueId, userId) => {
+    const response = await fetch(`${API_BASE_URL}/issues/${issueId}/watching?user_id=${userId}`, {
+      method: "DELETE",
+      headers: getHeaders(apiKey)
+    });
+    return response.ok;
+  },
+
   getStatuses: async (apiKey) => {
     const res = await fetch(`${API_BASE_URL}/statuses`, { headers: getHeaders(apiKey) });
     if (!res.ok) return [];
