@@ -499,7 +499,7 @@ export default function UserProfile({
                   <div className="flex justify-between items-start mb-2">
                     <div 
                       className="text-sm font-semibold text-emerald-600 cursor-pointer hover:underline"
-                      onClick={() => onViewDetail && onViewDetail(comment.issue?.id)} // Requereix que a l'App.jsx passis onViewDetail={goToDetail}
+                      onClick={() => onViewDetail && onViewDetail(comment.issue?.id)} 
                     >
                       A LA INCIDÈNCIA: #{comment.issue?.id} {comment.issue?.subject}
                     </div>

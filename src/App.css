@@ -1,8 +1,5 @@
-/* =========================================
-   ESTILOS GLOBALES & VARIABLES (Taiga Style)
-   ========================================= */
 :root {
-  --primary: #00b19d; /* El turquesa característico de Taiga */
+  --primary: #00b19d;
   --primary-hover: #009d8b;
   --background: #f4f5f7;
   --panel-bg: #ffffff;
@@ -25,7 +22,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Paneles blancos genéricos */
 .panel {
   background: var(--panel-bg);
   padding: 25px;
@@ -34,9 +30,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* =========================================
-   ELEMENTOS DE FORMULARIO COMUNES
-   ========================================= */
 input[type="text"],
 input[type="number"],
 select,
@@ -47,7 +40,7 @@ textarea {
   display: inline-block;
   border: 1px solid #ccc;
   border-radius: 4px;
-  box-sizing: border-box; /* Importante para el padding */
+  box-sizing: border-box; 
   font-family: var(--font-family);
   font-size: 14px;
   transition: border-color 0.2s;
@@ -76,9 +69,6 @@ label {
   font-size: 14px;
 }
 
-/* =========================================
-   BOTONES
-   ========================================= */
 .btn {
   padding: 10px 20px;
   border: none;
@@ -136,10 +126,6 @@ label {
 .btn-secondary:hover {
   background-color: #d8dbe0;
 }
-
-/* =========================================
-   ESTILOS ESPECÍFICOS DE COMPONENTES
-   ========================================= */
 
 /* Header & User Selector */
 .header-main {
