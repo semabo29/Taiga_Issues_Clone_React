@@ -35,7 +35,7 @@ En el següent vídeo es mostra la interacció completa amb la interfície d'usu
 
 ## 🎯 Funcionalitats Clau
 
-- **Interfície d'Usuari Dinàmica:** Consum 100% dinàmic dels atributs de l'API (Estats, Tipus, Prioritats, Severitats). L'estat no està "hardcodejat", s'adapta a la base de dades.
+- **Interfície d'Usuari Dinàmica:** Consum 100% dinàmic dels atributs de l'API (Estats, Tipus, Prioritats, Severitats). S'adapta a la base de dades.
 - **Filtrat i Ordenació:** Delegació eficient de cerques, filtres complexos i ordenació directament al backend mitjançant paràmetres d'URL exactes (`?status=New&sort=priority`).
 - **Gestió d'Incidències:** Creació, edició, visualització en detall i eliminació d'Issues.
 - **Inserció Massiva (Bulk):** Formulari especialitzat per a la creació ràpida de múltiples incidències alhora.
@@ -66,7 +66,7 @@ Abans de començar, assegura't de tenir instal·lat **Node.js** (v18+) i **npm**
 Obre la terminal i executa:
 
 ```bash
-git clone [https://github.com/semabo29/Taiga_Issues_Clone_React.git](https://github.com/semabo29/Taiga_Issues_Clone_React.git)
+git clone https://github.com/semabo29/Taiga_Issues_Clone_React.git
 cd Taiga_Issues_Clone_React
 ```
 
