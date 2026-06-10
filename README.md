@@ -3,6 +3,10 @@
   <h1>Taiga Clone - Client Web (React)</h1>
   <p><em>Interfície d'usuari SPA responsive per a la gestió i seguiment d'incidències.</em></p>
 
+  <p>
+     <b>Català</b> | <a href="README.en.md">🌍 English</a>
+  </p>
+
   <img src="https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB" alt="React" />
   <img src="https://img.shields.io/badge/Vite-B73BFE?style=flat-square&logo=vite&logoColor=FFD62E" alt="Vite" />
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="JavaScript" />
