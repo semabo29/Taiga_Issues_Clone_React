@@ -25,11 +25,10 @@ L'aplicació és un client web SPA (Single Page Application) que actua com a int
 
 ## ✨ Demostració del Projecte
 
-En el següent vídeo es mostra la interacció completa amb la interfície d'usuari:
+En el següent vídeo de 2 minuts es mostra la interacció completa amb la interfície d'usuari:
 
 <div align="center">
-  <!-- CANVIA AQUEST ENLLAÇ PEL TEU NOU VÍDEO DEL FRONTEND -->
-  <video src="ENLLAÇ_DEL_TEU_VIDEO_AQUI.webm" width="100%" controls="controls"></video>
+  <video src="https://github.com/user-attachments/assets/98cd7efd-9372-4256-a1e0-18d69dfc3240" width="100%" controls="controls"></video>
 </div>
 
 ---
