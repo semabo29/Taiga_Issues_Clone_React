@@ -18,7 +18,7 @@ L'aplicació és un client web SPA (Single Page Application) que actua com a int
 
 🌍 **Entorn de Producció (Frontend):** [Taiga React App (Vercel)](https://frontend-asw-taiga-project.vercel.app/)  
 ⚙️ **API REST (Backend):** [Taiga API (Render)](https://taiga-app.onrender.com/api/v1)  
-🌍 **Entorn de Producció (Ruby APP):** [Taiga App (Render)](https://taiga-app.onrender.com) 
+🌍 **Entorn de Producció (Ruby APP):** [Taiga App (Render)](https://taiga-app.onrender.com)   
 🌲 **Organització:** [Projecte Oficial a Taiga](https://tree.taiga.io/project/victorsalinasmontanuy-asw2526q2-it212)
 
 ---
